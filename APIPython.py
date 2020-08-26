@@ -2,6 +2,11 @@ import requests
 import json 
 
 
+def get_pokemons_types(url='http://pokeapi.co/api/v2/pokemon', offset=0):
+    args = {'offset':offset} if offset else {}
+
+
+
 def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
     args = {'offset': offset} if offset else {}
     
@@ -55,5 +60,5 @@ if __name__=='__main__':
     #      file.write(chunk)
 
   #response.close()
-
+ #TestGit
         
