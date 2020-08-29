@@ -1,21 +1,21 @@
-Pokemon,Type
-bulbasaur,grass and poison
-ivysaur,grass and poison
-venusaur,grass and poison
-charmander,fire
-charmeleon,fire
-charizard,fire and flying
-squirtle,water
-wartortle,water
-blastoise,water
-caterpie,bug
-metapod,bug
-butterfree,bug and flying
-weedle,bug and poison
-kakuna,bug and poison
-beedrill,bug and poison
-pidgey,normal and flying
-pidgeotto,normal and flying
-pidgeot,normal and flying
-rattata,normal
-raticate,normal
+Pokemon,Type,Attack,Defense
+bulbasaur,grass and poison,49,49
+ivysaur,grass and poison,62,63
+venusaur,grass and poison,82,83
+charmander,fire,52,43
+charmeleon,fire,64,58
+charizard,fire and flying,84,78
+squirtle,water,48,65
+wartortle,water,63,80
+blastoise,water,83,100
+caterpie,bug,30,35
+metapod,bug,20,55
+butterfree,bug and flying,45,50
+weedle,bug and poison,35,30
+kakuna,bug and poison,25,50
+beedrill,bug and poison,90,40
+pidgey,normal and flying,45,40
+pidgeotto,normal and flying,60,55
+pidgeot,normal and flying,80,75
+rattata,normal,56,35
+raticate,normal,81,60
