@@ -2,11 +2,6 @@ import requests
 import json 
 
 
-def get_pokemons_types(url='http://pokeapi.co/api/v2/pokemon', offset=0):
-    args = {'offset':offset} if offset else {}
-
-
-
 def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
     args = {'offset': offset} if offset else {}
     
@@ -15,7 +10,7 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
     if response.status_code == 200:
         payload = response.json()
         results = payload['results']
-        
+       
        
         if offset == 0:
             file = open('pokelist.csv','w')
@@ -27,17 +22,22 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
             for pokemon in results:
                 name = pokemon['name']
                 PokemonUrl = pokemon['url']
-                PokeResponse = requests.get(PokemonUrl, params=args)
-                PokemonType = PokeResponse.json()['types'][0]['type']['name']
-                # Payload = PokeResponse.json()
-                # Types = Payload['types']
-                # FirstType = Types[0]
-                # Type = FirstType['type']
-                # PokemonType = Type['name']
                 
-                print(name)
+                PokeResponse = requests.get(PokemonUrl, params=args)
+               
+                a = PokeResponse.json()
+               
+                typelist = [] 
+                for PokemonType in a['types']:
+                    typelist.append(PokemonType['type']['name'])
+                    
+                   
+                
+                PokemonTypeText = ' and '.join(typelist)
+              
+               
                 file = open('pokelist.csv','a')
-                file.write(name + ',' + PokemonType + '\n')
+                file.write(name + ',' + PokemonTypeText + '\n')
                 file.close()
                 
     next = input("Keep loading? [Y/N]").lower()
@@ -51,14 +51,4 @@ if __name__=='__main__':
 
 
 
- 
- 
- # url = 'https://i.imgur.com/n9z3sLg.jpg'
-  #response = requests.get(url, stream=True)
-  #with open('image.jpg', 'wb') as file:
-   #   for chunk in response.iter_content():
-    #      file.write(chunk)
-
-  #response.close()
- #TestGit
         
