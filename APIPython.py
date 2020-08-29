@@ -14,7 +14,7 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
        
         if offset == 0:
             file = open('pokelist.csv','w')
-            file.write('Pokemon'  + ',' + 'Type' + '\n')
+            file.write('Pokemon'  + ',' + 'Type' + ',' + 'Attack' + ',' + 'Defense' + '\n')
             file.close()
        
        
@@ -25,19 +25,29 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                 
                 PokeResponse = requests.get(PokemonUrl, params=args)
                
-                a = PokeResponse.json()
+                ReturnNode = PokeResponse.json()
                
+               #Empty string to save my returned values from loop.
                 typelist = [] 
-                for PokemonType in a['types']:
+                for PokemonType in ReturnNode['types']:
                     typelist.append(PokemonType['type']['name'])
                     
-                   
-                
                 PokemonTypeText = ' and '.join(typelist)
-              
-               
+                
+                
+                attack=0
+                defense=0
+                for node in ReturnNode['stats']:
+                    
+                    if node['stat']['name'] == 'attack':
+                        attack = node['base_stat']
+                    if node['stat']['name'] == 'defense':
+                        defense = node['base_stat']
+                    
+                    
+                    
                 file = open('pokelist.csv','a')
-                file.write(name + ',' + PokemonTypeText + '\n')
+                file.write(name + ',' + PokemonTypeText + ',' + str(attack) + ',' + str(defense) +  '\n')
                 file.close()
                 
     next = input("Keep loading? [Y/N]").lower()
