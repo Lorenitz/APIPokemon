@@ -14,7 +14,7 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
        
         if offset == 0:
             file = open('pokelist.csv','w')
-            file.write('Pokemon'  + ',' + 'Type' + ',' + 'Attack' + ',' + 'Defense' + '\n')
+            file.write('Pokemon'  + ',' + 'Type' + ',' + 'Attack' + ',' + 'Defense' + ',' + 'Speed'  + ',' + 'Location' +'\n')
             file.close()
        
        
@@ -27,6 +27,8 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                
                 ReturnNode = PokeResponse.json()
                
+                
+               
                #Empty string to save my returned values from loop.
                 typelist = [] 
                 for PokemonType in ReturnNode['types']:
@@ -35,19 +37,38 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                 PokemonTypeText = ' and '.join(typelist)
                 
                 
+                
+                
+                
+                
                 attack=0
                 defense=0
+                speed=0
                 for node in ReturnNode['stats']:
                     
                     if node['stat']['name'] == 'attack':
                         attack = node['base_stat']
                     if node['stat']['name'] == 'defense':
                         defense = node['base_stat']
+                    if node['stat']['name'] == 'speed':
+                        speed = node['base_stat']
                     
-                    
+                LocationUrl = ReturnNode['location_area_encounters']
+                LocationResponse = requests.get(LocationUrl, params = args)
+                
+                LocationNode = LocationResponse.json()
+                
+                
+                
+                LocalList=[]
+                for PokeLocation in LocationNode:
+                    LocalList.append(PokeLocation['location_area']['name'])
+                
+                PokemonLocation = ' and '.join(LocalList)    
+                
                     
                 file = open('pokelist.csv','a')
-                file.write(name + ',' + PokemonTypeText + ',' + str(attack) + ',' + str(defense) +  '\n')
+                file.write(name + ',' + PokemonTypeText + ',' + str(attack) + ',' + str(defense) + ',' + str(speed) +  ',' + str(PokemonLocation) +  '\n')
                 file.close()
                 
     next = input("Keep loading? [Y/N]").lower()
