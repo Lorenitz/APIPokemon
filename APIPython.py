@@ -14,7 +14,7 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
        
         if offset == 0:
             file = open('pokelist.csv','w')
-            file.write('Pokemon'  + ',' + 'Type' + ',' + 'Attack' + ',' + 'Defense' + ',' + 'Speed'  + ',' + 'Location' +'\n')
+            file.write('Pokemon'  + ',' + 'Type' + ',' + 'Attack' + ',' + 'Defense' + ',' + 'Speed'  + ',' + 'Location' + ',' + 'PokemonEgg' +  ',' + 'PokemonGen' + '\n')
             file.close()
        
        
@@ -29,18 +29,33 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                
                 
                
-               #Empty string to save my returned values from loop.
+               #Pokemon Types
                 typelist = [] 
                 for PokemonType in ReturnNode['types']:
                     typelist.append(PokemonType['type']['name'])
                     
                 PokemonTypeText = ' and '.join(typelist)
                 
+                #Pokemon Eggs
+                PokeSpeciesUrl = ReturnNode['species']['url']
+                PokeSpecies = requests.get(PokeSpeciesUrl, params=args)
+                ReturnPokeSpecies = PokeSpecies.json()
+                
+                Arr_eggGroups=[]
+                for Egggroup in ReturnPokeSpecies['egg_groups']:
+                    Arr_eggGroups.append(Egggroup['name'])
+                
+                PokemonEgg = ' and '.join(Arr_eggGroups)    
                 
                 
                 
+                #PokemonGeneration
+                
+                PokeGen = ReturnPokeSpecies['generation']['name']
+                            
                 
                 
+                #Pokemon Stats
                 attack=0
                 defense=0
                 speed=0
@@ -53,12 +68,11 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                     if node['stat']['name'] == 'speed':
                         speed = node['base_stat']
                     
+                #Pokemon Location    
                 LocationUrl = ReturnNode['location_area_encounters']
                 LocationResponse = requests.get(LocationUrl, params = args)
                 
                 LocationNode = LocationResponse.json()
-                
-                
                 
                 LocalList=[]
                 for PokeLocation in LocationNode:
@@ -66,9 +80,11 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                 
                 PokemonLocation = ' and '.join(LocalList)    
                 
-                    
+                
+                
+                #Writing my data on csv    
                 file = open('pokelist.csv','a')
-                file.write(name + ',' + PokemonTypeText + ',' + str(attack) + ',' + str(defense) + ',' + str(speed) +  ',' + str(PokemonLocation) +  '\n')
+                file.write(name + ',' + PokemonTypeText + ',' + str(attack) + ',' + str(defense) + ',' + str(speed) +  ',' + str(PokemonLocation) +  ',' +  PokemonEgg +   ',' +  PokeGen + '\n')
                 file.close()
                 
     next = input("Keep loading? [Y/N]").lower()
