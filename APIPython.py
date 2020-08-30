@@ -1,7 +1,6 @@
 import requests
 import json 
 
-
 def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
     args = {'offset': offset} if offset else {}
     
@@ -11,30 +10,24 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
         payload = response.json()
         results = payload['results']
        
-       
         if offset == 0:
-            file = open('pokelist.csv','w')
-            file.write('Pokemon'  + ',' + 'Type' + ',' + 'Attack' + ',' + 'Defense' + ',' + 'Speed'  + ',' + 'Location' + ',' + 'PokemonEgg' +  ',' + 'PokemonGen' + '\n')
-            file.close()
-       
-       
+            init_csv_headers()
+         
         if results:
-            for pokemon in results:
-                name = pokemon['name']
-                pokemon_url = pokemon['url']
-                
-                pokemon_info = get_pokemon_info(pokemon_url)    
-                pokemon_type_text = get_pokemon_type(pokemon_info)
+            for pokemon in results:                  
+                pokemon_info = get_pokemon_info(pokemon['url'])    
                 pokemon_species = get_pokemon_species(pokemon_info)
-                pokemon_egg = get_pokemon_egg(pokemon_species)
-                pokemon_gen = get_pokemon_gen(pokemon_species)
-                pokemon_location = get_pokemon_location(pokemon_info)
-                pokemon_stats = get_pokemon_stats(pokemon_info)
-                     
-                #Writing my data on csv    
-                file = open('pokelist.csv','a')
-                file.write(name + ',' + pokemon_type_text + ',' + str(pokemon_stats['attack']) + ',' + str(pokemon_stats['defense']) + ',' + str(pokemon_stats['speed']) +  ',' + pokemon_location +  ',' +  pokemon_egg +   ',' +  pokemon_gen + '\n')
-                file.close()
+                    
+                pokemon_row = {
+                    "name": pokemon['name'],
+                    "type_text": get_pokemon_type(pokemon_info),
+                    "stats": get_pokemon_stats(pokemon_info),
+                    "location": get_pokemon_location(pokemon_info),
+                    "egg": get_pokemon_egg(pokemon_species),
+                    "gen": get_pokemon_gen(pokemon_species)   
+                }
+
+                write_csv_row(pokemon_row)
                 
     next = input("Keep loading? [Y/N]").lower()
     if next == 'y':
@@ -99,7 +92,35 @@ def get_pokemon_stats(pokemon_info):
         if node['stat']['name'] == 'speed':
             result['speed'] = node['base_stat']
                     
-    return result                
+    return result    
+
+def init_csv_headers():
+    file = open('pokelist.csv','w')
+    file.write(
+        'Pokemon'  + ',' +
+        'Type' + ',' +
+        'Attack' + ',' +
+        'Defense' + ',' +
+        'Speed'  + ',' +
+        'Location' + ',' +
+        'PokemonEgg' +  ',' +
+        'PokemonGen' + '\n'
+    )
+    file.close()     
+    
+def write_csv_row(row):
+    file = open('pokelist.csv','a')
+    file.write(
+        row['name'] + ',' +
+        row['type_text'] + ',' +
+        str(row['stats']['attack']) + ',' + 
+        str(row['stats']['defense']) + ',' + 
+        str(row['stats']['speed']) +  ',' + 
+        row['location'] +  ',' +  
+        row['egg']  +   ',' +  
+        row['gen'] + '\n'
+    )
+    file.close()          
 
 if __name__=='__main__':
     #url='http://pokeapi.co/api/v2/pokemon-form/'
