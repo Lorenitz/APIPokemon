@@ -1,5 +1,8 @@
 import requests
 import json 
+import urllib.request
+import os.path
+import os
 
 def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
     args = {'offset': offset} if offset else {}
@@ -24,7 +27,8 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                     "stats": get_pokemon_stats(pokemon_info),
                     "location": get_pokemon_location(pokemon_info),
                     "egg": get_pokemon_egg(pokemon_species),
-                    "gen": get_pokemon_gen(pokemon_species)   
+                    "gen": get_pokemon_gen(pokemon_species),
+                    "url": get_pokemon_sprites(pokemon_info)   
                 }
 
                 write_csv_row(pokemon_row)
@@ -45,7 +49,27 @@ def get_pokemon_type(pokemon_info):
     result = ' and '.join(typelist)
     return result
 
+
+def get_pokemon_sprites(pokemon_info):
+    
+    
+    save_path = 'C:/Users/loren/Documents/GitHub Projects/APIPokemon/PokemonBack'
+    
+    poke_img_url = pokemon_info['sprites']['back_default']
+    filename ="back - " +  poke_img_url.split("/")[-1]
+    
+    path_fileName = os.path.join(save_path, filename+".png")
+    
+    
+    r = requests.get(poke_img_url, timeout=0.5)
+    
+    with open(path_fileName, 'wb') as back:
+        back.write(r.content)
+    
+    return poke_img_url
+
 def get_pokemon_species(pokemon_info):
+    
     poke_species_url = pokemon_info['species']['url']
     response = requests.get(poke_species_url)
     species_info = response.json()
@@ -104,7 +128,8 @@ def init_csv_headers():
         'Speed'  + ',' +
         'Location' + ',' +
         'PokemonEgg' +  ',' +
-        'PokemonGen' + '\n'
+        'PokemonGen' + ',' + 
+        'PokemonUrl' + '\n'
     )
     file.close()     
     
@@ -117,14 +142,19 @@ def write_csv_row(row):
         str(row['stats']['defense']) + ',' + 
         str(row['stats']['speed']) +  ',' + 
         row['location'] +  ',' +  
-        row['egg']  +   ',' +  
-        row['gen'] + '\n'
+        row['egg']  +   ',' +
+        row['gen'] + ',' +   
+        row['url'] + '\n'
     )
     file.close()          
 
 if __name__=='__main__':
-    #url='http://pokeapi.co/api/v2/pokemon-form/'
-    get_pokemons()
+    
+    start = input("Pokemon Data from csv or xlsx [CSV/XLSX]").lower()
+    if start == 'csv':
+       get_pokemons()
+    else:
+        pass
 
 
 
