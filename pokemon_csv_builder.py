@@ -28,7 +28,8 @@ def get_pokemons(url='http://pokeapi.co/api/v2/pokemon/', offset=0):
                     "location": get_pokemon_location(pokemon_info),
                     "egg": get_pokemon_egg(pokemon_species),
                     "gen": get_pokemon_gen(pokemon_species),
-                    "url": get_pokemon_sprites(pokemon_info)   
+                    "url": get_pokemon_sprites(pokemon_info), 
+                    "urlFront": get_pokemon_sprites_Front(pokemon_info)  
                 }
 
                 write_csv_row(pokemon_row)
@@ -67,6 +68,24 @@ def get_pokemon_sprites(pokemon_info):
         back.write(r.content)
     
     return poke_img_url
+
+def get_pokemon_sprites_Front(pokemon_info):
+    
+    
+    save_path = 'C:/Users/loren/Documents/GitHub Projects/APIPokemon/PokemonFront'
+    
+    poke_img_url_front = pokemon_info['sprites']['front_default']
+    filename ="front - " +  poke_img_url_front.split("/")[-1]
+    
+    path_fileName = os.path.join(save_path, filename+".png")
+    
+    
+    r = requests.get(poke_img_url_front, timeout=0.5)
+    
+    with open(path_fileName, 'wb') as front:
+        front.write(r.content)
+    
+    return poke_img_url_front
 
 def get_pokemon_species(pokemon_info):
     
@@ -129,7 +148,8 @@ def init_csv_headers():
         'Location' + ',' +
         'PokemonEgg' +  ',' +
         'PokemonGen' + ',' + 
-        'PokemonUrl' + '\n'
+        'PokemonUrl'  + ',' + 
+        'PokemonUrlFront' + '\n'
     )
     file.close()     
     
@@ -144,7 +164,8 @@ def write_csv_row(row):
         row['location'] +  ',' +  
         row['egg']  +   ',' +
         row['gen'] + ',' +   
-        row['url'] + '\n'
+        row['url']  + ',' + 
+        row['urlFront'] + '\n'
     )
     file.close()          
 
